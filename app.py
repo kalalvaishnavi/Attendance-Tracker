@@ -524,6 +524,7 @@ def student_management(user: User) -> None:
                             )
                             conn.commit()
                         st.success("Student created.")
+                        st.toast(f"Student {first_name} {last_name} added to matrix.", icon="👤")
                         st.rerun()
                     except sqlite3.IntegrityError:
                         st.error("Roll number already exists.")
@@ -658,6 +659,7 @@ def attendance_page(user: User) -> None:
                 )
             conn.commit()
         st.success("Attendance saved. Existing entries were updated safely when present.")
+        st.toast(f"Attendance for {class_choice['class_name']}-{class_choice['section']} locked.", icon="✅")
         st.rerun()
 
     summary = fetch_all(
@@ -947,6 +949,7 @@ def users_page(user: User) -> None:
                     )
                     conn.commit()
                 st.success("User created.")
+                st.toast(f"Access granted to {full_name} as {role}.", icon="🔐")
                 st.rerun()
             except sqlite3.IntegrityError:
                 st.error("Username already exists.")
