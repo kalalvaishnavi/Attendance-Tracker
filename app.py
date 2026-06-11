@@ -92,6 +92,7 @@ def verify_password(password: str, stored_hash: str) -> bool:
 
 
 def init_db() -> None:
+    """Initializes the SQLite database with required tables and indexes."""
     with closing(connect()) as conn:
         conn.executescript(
             """
@@ -158,6 +159,11 @@ def init_db() -> None:
 
 
 def seed_defaults(conn: sqlite3.Connection) -> None:
+    """Seeds the database with default admin and teacher accounts and sample students.
+
+    Args:
+        conn: An active SQLite connection.
+    """
     created = now_text()
     users = [
         ("admin", "admin123", "System Admin", "Admin", "admin@example.com", "9000000000"),
