@@ -1,0 +1,11 @@
+title = "Attendance Tracker Gitleaks Config"
+
+[allowlist]
+description = "Allow documented placeholder values only"
+regexes = [
+  '''change-me-in-local-env''',
+  '''sqlite:///database/attendance\.db''',
+]
+paths = [
+  '''\.env\.example''',
+]

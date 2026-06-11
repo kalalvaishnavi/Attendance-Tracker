@@ -1,0 +1,8 @@
+.venv/
+htmlcov/
+database/
+face_data/
+reports/
+*.db
+*.sqlite
+*.sqlite3

@@ -1,6 +1,15 @@
 __pycache__/
 *.py[cod]
 *.log
+.env
+.coverage
+coverage.xml
+htmlcov/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.semgrep/
+.vulture_cache/
 .streamlit/secrets.toml
 database/*.db
 database/*.sqlite*

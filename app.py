@@ -8,7 +8,7 @@ import re
 import sqlite3
 from contextlib import closing, contextmanager
 from dataclasses import dataclass
-from datetime import UTC, date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from io import StringIO
 from pathlib import Path
 from typing import Generator, Iterable
@@ -25,6 +25,7 @@ FACE_DIR = APP_DIR / "face_data"
 STYLE_PATH = APP_DIR / "static" / "style.css"
 SESSION_TIMEOUT_MINUTES = 45
 ATTENDANCE_STATUSES = ("Present", "Absent", "Excused")
+UTC = timezone.utc
 
 
 @dataclass(frozen=True)
