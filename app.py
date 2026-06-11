@@ -73,6 +73,29 @@ def hash_password(password: str, salt: str | None = None) -> str:
     return f"{salt}${digest.hex()}"
 
 
+def is_password_strong(password: str) -> tuple[bool, str]:
+    """Checks if a password meets minimum security requirements.
+
+    Requirements:
+    - At least 8 characters
+    - At least one uppercase letter
+    - At least one lowercase letter
+    - At least one digit
+
+    Returns:
+        A tuple of (is_strong, message).
+    """
+    if len(password) < 8:
+        return False, "Password must be at least 8 characters long."
+    if not any(c.isupper() for c in password):
+        return False, "Password must contain at least one uppercase letter."
+    if not any(c.islower() for c in password):
+        return False, "Password must contain at least one lowercase letter."
+    if not any(c.isdigit() for c in password):
+        return False, "Password must contain at least one digit."
+    return True, "Password is strong."
+
+
 def verify_password(password: str, stored_hash: str) -> bool:
     """Verifies a password against a stored hash.
 
@@ -928,8 +951,9 @@ def users_page(user: User) -> None:
         email = cols[0].text_input("Email")
         phone = cols[1].text_input("Phone")
         if st.form_submit_button("Create user", use_container_width=True):
-            if len(password) < 6:
-                st.error("Password must contain at least 6 characters.")
+            is_strong, msg = is_password_strong(password)
+            if not is_strong:
+                st.error(msg)
                 return
             if not username.strip() or not full_name.strip():
                 st.error("Username and full name are required.")
