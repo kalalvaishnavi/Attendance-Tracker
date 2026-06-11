@@ -207,13 +207,23 @@ def load_css() -> None:
         st.markdown(f"<style>{STYLE_PATH.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
 
 
-def page_header(kicker: str, title: str, copy: str, chips: Iterable[str] = ()) -> None:
+def page_header(kicker: str, title: str, copy: str, chips: Iterable[str] = (), icon: str | None = None) -> None:
+    """Renders a standardized hero section for each page.
+
+    Args:
+        kicker: Small text above the main title.
+        title: The main page title (supports HTML/bold).
+        copy: Descriptive text below the title.
+        chips: List of status chips to display.
+        icon: Optional emoji or icon character to display next to the title.
+    """
     chip_html = "".join(f'<span class="status-chip">{chip}</span>' for chip in chips)
+    title_prefix = f'<span class="hero-icon">{icon}</span> ' if icon else ""
     st.markdown(
         f"""
         <section class="hero-panel">
           <div class="hero-kicker">{kicker}</div>
-          <h1 class="hero-title">{title}</h1>
+          <h1 class="hero-title">{title_prefix}{title}</h1>
           <div class="hero-copy">{copy}</div>
           <div class="status-strip">{chip_html}</div>
         </section>
