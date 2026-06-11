@@ -27,37 +27,26 @@ Manual attendance management is time-consuming and prone to errors. This project
 
 ## Technology Stack
 
-### Frontend
+This project is built with a modern Python stack:
 
-* HTML
-* CSS
-* JavaScript
-
-### Backend
-
-* Python
-
-### Database
-
-* SQLite / CSV Storage
+- **Frontend/App**: [Streamlit](https://streamlit.io/)
+- **Database**: SQLite (Relational Storage)
+- **Image Processing**: Pillow (Face Fingerprinting)
+- **Authentication**: PBKDF2-SHA256 Hashing
 
 ## Project Structure
 
+```text
 attendance-tracker/
-
-├── app.py
-
-├── database/
-
-├── templates/
-
-├── static/
-
-├── reports/
-
-├── requirements.txt
-
-└── README.md
+├── app.py              # Main Streamlit application
+├── sql_queries.py      # Centralized SQL repository
+├── database/           # SQLite database storage
+├── face_data/          # Student face profile images
+├── static/             # CSS styling
+├── reports/            # Exported attendance data
+├── requirements.txt    # Dependency list
+└── README.md           # Documentation
+```
 
 ## Installation
 
