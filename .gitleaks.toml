@@ -1,0 +1,17 @@
+title = "Attendance Tracker Gitleaks Configuration"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Documented demo credentials for local development only"
+paths = [
+  '''README\.md''',
+  '''SECURITY\.md''',
+  '''app\.py''',
+]
+regexes = [
+  '''admin123''',
+  '''teacher123''',
+]
+

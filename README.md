@@ -38,14 +38,15 @@ This project is built with a modern Python stack:
 
 ```text
 attendance-tracker/
-├── app.py              # Main Streamlit application
-├── sql_queries.py      # Centralized SQL repository
-├── database/           # SQLite database storage
-├── face_data/          # Student face profile images
-├── static/             # CSS styling
-├── reports/            # Exported attendance data
-├── requirements.txt    # Dependency list
-└── README.md           # Documentation
+|-- app.py              # Main Streamlit application
+|-- sql_queries.py      # Centralized SQL repository
+|-- database/           # SQLite database storage
+|-- face_data/          # Student face profile images
+|-- static/             # CSS styling
+|-- reports/            # Exported attendance data
+|-- requirements.txt    # Runtime dependency list
+|-- pyproject.toml      # Packaging, test, lint, and security config
+`-- README.md           # Documentation
 ```
 
 ## Installation
@@ -128,6 +129,37 @@ Open `Face Attendance` from the sidebar.
 2. Select a student or class.
 3. View attendance summaries and percentages.
 
+## Development Quality
+
+Install development tooling with:
+
+```bash
+pip install -e ".[dev]"
+pre-commit install
+```
+
+Useful checks:
+
+```bash
+pytest
+ruff check .
+ruff format --check .
+mypy app.py sql_queries.py
+bandit -c pyproject.toml -r app.py sql_queries.py
+pip-audit
+semgrep scan --config .semgrep.yml --config p/python --config p/secrets
+gitleaks detect --source . --config .gitleaks.toml --no-git
+```
+
+## Docker
+
+Build and run the Streamlit app:
+
+```bash
+docker build -t attendance-tracker .
+docker run --rm -p 8501:8501 attendance-tracker
+```
+
 ## Future Enhancements
 
 * QR Code Attendance
@@ -144,4 +176,4 @@ Open `Face Attendance` from the sidebar.
 
 ## License
 
-This project is developed for educational and internship purposes.
+This project is licensed under the MIT License. See `LICENSE` for details.

@@ -29,6 +29,26 @@ git checkout -b feature/your-feature-name
 4. Test your changes thoroughly.
 5. Update documentation if necessary.
 
+## Local Quality Checks
+
+Install the development extras and Git hooks before opening a pull request:
+
+```bash
+pip install -e ".[dev]"
+pre-commit install
+```
+
+Run the same core checks used by CI:
+
+```bash
+pytest
+ruff check .
+ruff format --check .
+mypy app.py sql_queries.py
+bandit -c pyproject.toml -r app.py sql_queries.py
+pip-audit
+```
+
 ## Coding Standards
 
 * Write clean and readable code.

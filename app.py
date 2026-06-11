@@ -20,8 +20,8 @@ from sql_queries import GET_RECENT_ATTENDANCE, GET_STUDENT_MATCH, INIT_DB_SCRIPT
 
 
 APP_DIR = Path(__file__).parent
-DB_PATH = APP_DIR / "database" / "attendance.db"
-FACE_DIR = APP_DIR / "face_data"
+DB_PATH = Path(os.getenv("ATTENDANCE_DB_PATH", APP_DIR / "database" / "attendance.db"))
+FACE_DIR = Path(os.getenv("ATTENDANCE_FACE_DIR", APP_DIR / "face_data"))
 STYLE_PATH = APP_DIR / "static" / "style.css"
 SESSION_TIMEOUT_MINUTES = 45
 ATTENDANCE_STATUSES = ("Present", "Absent", "Excused")
@@ -245,7 +245,8 @@ def image_to_hash(uploaded_image) -> str:
         if image.width < 64 or image.height < 64:
             raise ValueError("Image is too small for accurate recognition. Minimum 64x64 required.")
         image = ImageOps.fit(image, (32, 32), method=Image.Resampling.LANCZOS)
-        pixels = list(image.getdata())
+        get_pixels = getattr(image, "get_flattened_data", image.getdata)
+        pixels = list(get_pixels())
         avg = sum(pixels) / len(pixels)
         return "".join("1" if p >= avg else "0" for p in pixels)
     except Exception as e:

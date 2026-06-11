@@ -1,0 +1,156 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "attendance-tracker"
+version = "0.1.0"
+description = "A Streamlit and SQLite application for tracking student attendance."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Attendance Tracker contributors" }]
+dependencies = [
+  "Pillow>=10.3.0",
+  "regex>=2024.5.15",
+  "streamlit>=1.35.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "bandit[toml]>=1.8.2",
+  "coverage[toml]>=7.6.10",
+  "flake8>=7.1.1",
+  "mypy>=1.14.1",
+  "pip-audit>=2.7.3",
+  "pre-commit>=4.0.1",
+  "pylint>=3.3.3",
+  "pytest>=8.3.4",
+  "pytest-cov>=6.0.0",
+  "pyupgrade>=3.19.1",
+  "ruff>=0.8.6",
+  "semgrep>=1.101.0",
+  "types-Pillow>=10.2.0.20240822",
+  "vulture>=2.14",
+]
+
+[tool.setuptools]
+py-modules = ["app", "sql_queries"]
+
+[tool.pytest.ini_options]
+addopts = [
+  "--cov=app",
+  "--cov=sql_queries",
+  "--cov-report=term-missing",
+  "--cov-report=xml",
+  "--cov-report=html",
+  "--cov-fail-under=20",
+]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["app", "sql_queries"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+exclude_lines = [
+  "pragma: no cover",
+  "if __name__ == .__main__.:",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+extend-exclude = [
+  ".venv",
+  "database",
+  "face_data",
+  "reports",
+]
+
+[tool.ruff.lint]
+select = [
+  "A",
+  "B",
+  "C4",
+  "E",
+  "F",
+  "I",
+  "N",
+  "PIE",
+  "PL",
+  "PT",
+  "RET",
+  "RUF",
+  "S",
+  "SIM",
+  "T20",
+  "UP",
+  "W",
+]
+ignore = [
+  "PLR0912",
+  "PLR0915",
+  "PLR2004",
+  "S101",
+  "S311",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_return_any = false
+exclude = ["\\.venv", "database", "face_data", "reports"]
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv"]
+skips = [
+  "B101",
+  "B311",
+  "B608",
+]
+
+[tool.pylint.main]
+py-version = "3.10"
+ignore = [".venv", "database", "face_data", "reports"]
+jobs = 0
+
+[tool.pylint.messages_control]
+disable = [
+  "broad-exception-caught",
+  "duplicate-code",
+  "import-error",
+  "invalid-name",
+  "missing-class-docstring",
+  "missing-function-docstring",
+  "missing-module-docstring",
+  "too-few-public-methods",
+  "too-many-arguments",
+  "too-many-branches",
+  "too-many-lines",
+  "too-many-locals",
+  "too-many-statements",
+]
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.vulture]
+exclude = [".venv", "database", "face_data", "reports", "htmlcov"]
+ignore_decorators = ["@st.cache_data", "@st.cache_resource"]
+min_confidence = 80
+paths = ["app.py", "sql_queries.py", "tests"]
+sort_by_size = true

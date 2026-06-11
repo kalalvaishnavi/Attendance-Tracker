@@ -1,0 +1,7 @@
+rules:
+  - id: streamlit-unsafe-html-review
+    languages: [python]
+    severity: INFO
+    message: Review Streamlit unsafe HTML rendering to ensure all interpolated content is trusted or escaped.
+    pattern: st.markdown(..., unsafe_allow_html=True)
+
