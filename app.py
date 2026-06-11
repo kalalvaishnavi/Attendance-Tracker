@@ -437,6 +437,11 @@ def dashboard() -> None:
         "Monitor daily attendance signals, active student load, user access, and live reporting health from one command surface.",
         ("Live SQLite telemetry", "Session protected", "CSV export armed"),
     )
+
+    u = current_user()
+    if u:
+        st.info(f"Welcome back, **{u.full_name}**. Access Level: **{u.role}**.")
+
     st.markdown(
         f"""
         <div class="metric-row">
