@@ -236,12 +236,22 @@ def image_to_hash(uploaded_image) -> str:
 
     Returns:
         A 1024-character string of '0's and '1's representing the image hash.
+
+    Raises:
+        ValueError: If the image cannot be processed.
     """
-    image = Image.open(uploaded_image).convert("L")
-    image = ImageOps.fit(image, (32, 32), method=Image.Resampling.LANCZOS)
-    pixels = list(image.getdata())
-    avg = sum(pixels) / len(pixels)
-    return "".join("1" if p >= avg else "0" for p in pixels)
+    try:
+        image = Image.open(uploaded_image).convert("L")
+        if image.width < 64 or image.height < 64:
+            raise ValueError("Image is too small for accurate recognition. Minimum 64x64 required.")
+        image = ImageOps.fit(image, (32, 32), method=Image.Resampling.LANCZOS)
+        pixels = list(image.getdata())
+        avg = sum(pixels) / len(pixels)
+        return "".join("1" if p >= avg else "0" for p in pixels)
+    except Exception as e:
+        if isinstance(e, ValueError):
+            raise
+        raise ValueError(f"Failed to process image: {str(e)}")
 
 
 def hamming_distance(left: str, right: str) -> int:
