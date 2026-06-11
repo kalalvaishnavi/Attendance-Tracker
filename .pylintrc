@@ -1,0 +1,23 @@
+[MAIN]
+py-version=3.10
+ignore=.venv,database,face_data,reports
+jobs=0
+
+[MESSAGES CONTROL]
+disable=
+    broad-exception-caught,
+    duplicate-code,
+    import-error,
+    invalid-name,
+    missing-class-docstring,
+    missing-function-docstring,
+    missing-module-docstring,
+    too-few-public-methods,
+    too-many-arguments,
+    too-many-branches,
+    too-many-lines,
+    too-many-locals,
+    too-many-statements
+
+[FORMAT]
+max-line-length=120

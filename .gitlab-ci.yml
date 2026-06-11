@@ -1,7 +1,11 @@
 stages:
-  - quality
+  - format
+  - lint
+  - type_check
   - security
   - test
+  - coverage
+  - changelog
 
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
@@ -17,20 +21,33 @@ default:
     - python -m pip install --upgrade pip
     - python -m pip install -e ".[dev]"
 
-lint:
-  stage: quality
+format:
+  stage: format
   script:
     - ruff format --check .
+    - pyupgrade --py310-plus app.py sql_queries.py tests/*.py
+    - git diff --exit-code -- app.py sql_queries.py tests
+
+lint:
+  stage: lint
+  script:
     - ruff check .
     - flake8 .
     - pylint app.py sql_queries.py tests
-    - mypy app.py sql_queries.py
-    - pyupgrade --py310-plus app.py sql_queries.py tests/*.py
-    - git diff --exit-code -- app.py sql_queries.py tests
     - vulture app.py sql_queries.py tests
+
+type_check:
+  stage: type_check
+  script:
+    - mypy app.py sql_queries.py
 
 test:
   stage: test
+  script:
+    - pytest --no-cov
+
+coverage:
+  stage: coverage
   script:
     - pytest
   coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
@@ -69,3 +86,23 @@ gitleaks:
   before_script: []
   script:
     - gitleaks detect --source . --config .gitleaks.toml --no-git --verbose
+
+automated_changelog:
+  stage: changelog
+  image:
+    name: orhunp/git-cliff:latest
+    entrypoint: [""]
+  before_script: []
+  script:
+    - git-cliff --config .git-cliff.toml --output CHANGELOG.md --unreleased
+    - git diff --exit-code -- CHANGELOG.md
+
+git-cliff:
+  stage: changelog
+  image:
+    name: orhunp/git-cliff:latest
+    entrypoint: [""]
+  before_script: []
+  script:
+    - git-cliff --config cliff.toml --output CHANGELOG.md --unreleased
+    - git diff --exit-code -- CHANGELOG.md

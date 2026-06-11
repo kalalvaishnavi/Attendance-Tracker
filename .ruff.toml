@@ -1,0 +1,39 @@
+target-version = "py310"
+line-length = 120
+extend-exclude = [
+  ".venv",
+  "database",
+  "face_data",
+  "reports",
+]
+
+[lint]
+select = [
+  "A",
+  "B",
+  "C4",
+  "E",
+  "F",
+  "I",
+  "N",
+  "PIE",
+  "PL",
+  "PT",
+  "RET",
+  "RUF",
+  "S",
+  "SIM",
+  "T20",
+  "UP",
+  "W",
+]
+ignore = [
+  "PLR0912",
+  "PLR0915",
+  "PLR2004",
+  "S101",
+  "S311",
+]
+
+[lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]

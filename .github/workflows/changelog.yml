@@ -1,0 +1,19 @@
+name: automated_changelog
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  automated_changelog:
+    name: Automated Changelog (Git-Cliff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: --output CHANGELOG.md --unreleased
+      - run: git diff --exit-code -- CHANGELOG.md

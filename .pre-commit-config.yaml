@@ -65,3 +65,12 @@ repos:
     hooks:
       - id: gitleaks
         args: [detect, --source, ., --config, .gitleaks.toml, --no-git]
+
+  - repo: local
+    hooks:
+      - id: git-cliff
+        name: automated changelog
+        entry: git-cliff --config .git-cliff.toml --output CHANGELOG.md --unreleased
+        language: system
+        pass_filenames: false
+        files: ^(\.git-cliff\.toml|CHANGELOG\.md)$
