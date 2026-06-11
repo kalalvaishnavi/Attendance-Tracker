@@ -58,7 +58,21 @@ def db_session() -> Generator[sqlite3.Connection, None, None]:
 
 
 def now_text() -> str:
+    """Returns the current UTC time as an ISO 8601 string.
+
+    Returns:
+        ISO 8601 formatted string (e.g., '2026-06-11T09:00:00+00:00').
+    """
     return datetime.now(UTC).isoformat(timespec="seconds")
+
+
+def today_text() -> str:
+    """Returns the current date as an ISO 8601 string.
+
+    Returns:
+        ISO 8601 date string (e.g., '2026-06-11').
+    """
+    return date.today().isoformat()
 
 
 def hash_password(password: str, salt: str | None = None) -> str:
@@ -403,7 +417,7 @@ def dashboard() -> None:
             (SELECT COUNT(*) FROM attendance WHERE attendance_date = ?) AS today_records,
             (SELECT COUNT(*) FROM attendance) AS all_records
         """,
-        (date.today().isoformat(),),
+        (today_text(),),
     )
     present_absent = fetch_one(
         """
