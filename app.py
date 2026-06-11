@@ -272,14 +272,41 @@ def image_to_hash(uploaded_image) -> str:
 
 
 def hamming_distance(left: str, right: str) -> int:
+    """Calculates the Hamming distance between two bitstrings.
+
+    Args:
+        left: First bitstring.
+        right: Second bitstring.
+
+    Returns:
+        The number of positions at which the corresponding bits are different.
+    """
     return sum(1 for a, b in zip(left, right) if a != b) + abs(len(left) - len(right))
 
 
 def face_match_confidence(distance: int, hash_size: int = 1024) -> float:
+    """Calculates a confidence percentage based on Hamming distance.
+
+    Args:
+        distance: The calculated Hamming distance.
+        hash_size: The total number of bits in the hash.
+
+    Returns:
+        A float representing the confidence percentage (0-100).
+    """
     return max(0.0, round((1 - distance / hash_size) * 100, 2))
 
 
 def save_face_reference(student_id: int, uploaded_image) -> str:
+    """Saves an uploaded face image to the filesystem and returns the relative path.
+
+    Args:
+        student_id: The ID of the student.
+        uploaded_image: File-like object containing the image.
+
+    Returns:
+        The relative path to the saved image.
+    """
     FACE_DIR.mkdir(parents=True, exist_ok=True)
     uploaded_image.seek(0)
     image = Image.open(uploaded_image).convert("RGB")
@@ -290,6 +317,15 @@ def save_face_reference(student_id: int, uploaded_image) -> str:
 
 
 def find_face_match(image_hash: str, threshold: int = 330) -> tuple[sqlite3.Row | None, float, int]:
+    """Searches the database for a student matching the provided face hash.
+
+    Args:
+        image_hash: The 1024-bit hash of the captured face.
+        threshold: The maximum Hamming distance to consider a match.
+
+    Returns:
+        A tuple of (matching student Row or None, confidence percentage, distance).
+    """
     profiles = fetch_all(
         """
         SELECT fp.student_id, fp.image_hash, s.roll_number,
