@@ -4,6 +4,7 @@ import csv
 import hashlib
 import hmac
 import os
+import re
 import sqlite3
 from contextlib import closing, contextmanager
 from dataclasses import dataclass
@@ -73,6 +74,21 @@ def hash_password(password: str, salt: str | None = None) -> str:
     salt = salt or os.urandom(16).hex()
     digest = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 120_000)
     return f"{salt}${digest.hex()}"
+
+
+def is_valid_email(email: str) -> bool:
+    """Validates an email address using a standard regular expression.
+
+    Args:
+        email: The email string to validate.
+
+    Returns:
+        True if valid, False otherwise.
+    """
+    if not email:
+        return True  # Optional field
+    pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return bool(re.match(pattern, email))
 
 
 def is_password_strong(password: str) -> tuple[bool, str]:
@@ -498,6 +514,8 @@ def student_management(user: User) -> None:
             if st.form_submit_button("Create student", use_container_width=True):
                 if not all([first_name.strip(), last_name.strip(), roll_number.strip(), class_name.strip(), section.strip()]):
                     st.error("First name, last name, roll number, class, and section are required.")
+                elif not is_valid_email(email.strip()):
+                    st.error("Invalid email address format.")
                 else:
                     try:
                         with closing(connect()) as conn:
@@ -926,6 +944,9 @@ def users_page(user: User) -> None:
                 return
             if not username.strip() or not full_name.strip():
                 st.error("Username and full name are required.")
+                return
+            if not is_valid_email(email.strip()):
+                st.error("Invalid email address format.")
                 return
             try:
                 with closing(connect()) as conn:
