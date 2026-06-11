@@ -5,12 +5,12 @@ import hashlib
 import hmac
 import os
 import sqlite3
-from contextlib import closing
+from contextlib import closing, contextmanager
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 from io import StringIO
 from pathlib import Path
-from typing import Iterable
+from typing import Generator, Iterable
 
 import streamlit as st
 from PIL import Image, ImageOps
@@ -38,6 +38,20 @@ def connect() -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     return conn
+
+
+@contextmanager
+def db_session() -> Generator[sqlite3.Connection, None, None]:
+    """Context manager for database sessions with automatic commit/rollback."""
+    conn = connect()
+    try:
+        yield conn
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
 
 
 def now_text() -> str:
