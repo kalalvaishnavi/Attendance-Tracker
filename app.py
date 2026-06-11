@@ -59,12 +59,30 @@ def now_text() -> str:
 
 
 def hash_password(password: str, salt: str | None = None) -> str:
+    """Hashes a password using PBKDF2 with SHA-256.
+
+    Args:
+        password: The plain-text password to hash.
+        salt: Optional salt. If None, a new random salt is generated.
+
+    Returns:
+        A string containing the salt and the hex-encoded digest, separated by '$'.
+    """
     salt = salt or os.urandom(16).hex()
     digest = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 120_000)
     return f"{salt}${digest.hex()}"
 
 
 def verify_password(password: str, stored_hash: str) -> bool:
+    """Verifies a password against a stored hash.
+
+    Args:
+        password: The plain-text password to verify.
+        stored_hash: The stored hash string (salt$digest).
+
+    Returns:
+        True if the password matches, False otherwise.
+    """
     try:
         salt, expected = stored_hash.split("$", 1)
     except ValueError:
@@ -248,6 +266,15 @@ def find_face_match(image_hash: str, threshold: int = 330) -> tuple[sqlite3.Row 
 
 
 def get_user_by_credentials(username: str, password: str) -> User | None:
+    """Authenticates a user and updates their last login timestamp.
+
+    Args:
+        username: The username to authenticate.
+        password: The plain-text password.
+
+    Returns:
+        A User object if successful, None otherwise.
+    """
     with closing(connect()) as conn:
         row = conn.execute("SELECT * FROM users WHERE username = ?", (username.strip(),)).fetchone()
         if not row or not verify_password(password, row["password_hash"]):
