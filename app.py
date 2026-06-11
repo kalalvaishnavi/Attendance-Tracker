@@ -256,12 +256,19 @@ def page_header(kicker: str, title: str, copy: str, chips: Iterable[str] = (), i
 
 
 def image_to_hash(uploaded_image) -> str:
+    """Generates a 1024-bit perceptual hash (average hash) for an image.
+
+    Args:
+        uploaded_image: File-like object containing image data.
+
+    Returns:
+        A 1024-character string of '0's and '1's representing the image hash.
+    """
     image = Image.open(uploaded_image).convert("L")
     image = ImageOps.fit(image, (32, 32), method=Image.Resampling.LANCZOS)
-    pixel_source = image.get_flattened_data() if hasattr(image, "get_flattened_data") else image.getdata()
-    pixels = list(pixel_source)
-    average = sum(pixels) / len(pixels)
-    return "".join("1" if pixel >= average else "0" for pixel in pixels)
+    pixels = list(image.getdata())
+    avg = sum(pixels) / len(pixels)
+    return "".join("1" if p >= avg else "0" for p in pixels)
 
 
 def hamming_distance(left: str, right: str) -> int:
