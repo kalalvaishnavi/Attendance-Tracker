@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "A Streamlit and SQLite application for tracking student attendance."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = { text = "AGPL-3.0-or-later" }
 authors = [{ name = "Attendance Tracker contributors" }]
 dependencies = [
   "Pillow>=10.3.0",
@@ -40,8 +40,7 @@ py-modules = ["app", "sql_queries"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = [
-  "--cov=app",
-  "--cov=sql_queries",
+  "--cov=.",
   "--cov-report=term-missing",
   "--cov-report=xml",
   "--cov-report=html",

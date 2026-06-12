@@ -22,7 +22,7 @@ test:
 	pytest --no-cov
 
 coverage:
-	pytest
+	pytest --cov=.
 
 security:
 	bandit -c pyproject.toml -r app.py sql_queries.py

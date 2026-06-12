@@ -31,6 +31,7 @@
 
 - Test framework: pytest configured in `pyproject.toml`
 - Coverage reporting: pytest-cov configured in `pyproject.toml`
+- Coverage command: `pytest --cov=.`
 - Fail-under threshold: `--cov-fail-under=20`
 
 ## Automation and CI
