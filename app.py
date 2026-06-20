@@ -456,10 +456,10 @@ def dashboard() -> None:
     st.markdown(
         f"""
         <div class="metric-row">
-          <div class="metric-tile"><strong>{totals['active_students']}</strong><span>Active students</span></div>
-          <div class="metric-tile"><strong>{totals['today_records']}</strong><span>Marked today</span></div>
+          <div class="metric-tile"><strong>{totals["active_students"]}</strong><span>Active students</span></div>
+          <div class="metric-tile"><strong>{totals["today_records"]}</strong><span>Marked today</span></div>
           <div class="metric-tile"><strong>{rate}%</strong><span>Overall attendance</span></div>
-          <div class="metric-tile"><strong>{totals['users']}</strong><span>System users</span></div>
+          <div class="metric-tile"><strong>{totals["users"]}</strong><span>System users</span></div>
         </div>
         <div class="signal-grid">
           <div class="signal-card">
@@ -497,7 +497,11 @@ def student_management(user: User) -> None:
         "Student Matrix",
         "Student <strong>Records</strong>",
         "Search, create, update, and archive student profiles with role-aware controls and persistent storage.",
-        ("Admin write access" if user.role == "Admin" else "Teacher read-only", "Indexed search", "Active archive flow"),
+        (
+            "Admin write access" if user.role == "Admin" else "Teacher read-only",
+            "Indexed search",
+            "Active archive flow",
+        ),
     )
 
     if user.role != "Admin":
@@ -542,7 +546,9 @@ def student_management(user: User) -> None:
             contact_number = cols[0].text_input("Contact number")
             email = cols[1].text_input("Email")
             if st.form_submit_button("Create student", use_container_width=True):
-                if not all([first_name.strip(), last_name.strip(), roll_number.strip(), class_name.strip(), section.strip()]):
+                if not all(
+                    [first_name.strip(), last_name.strip(), roll_number.strip(), class_name.strip(), section.strip()]
+                ):
                     st.error("First name, last name, roll number, class, and section are required.")
                 elif not is_valid_email(email.strip()):
                     st.error("Invalid email address format.")
@@ -649,7 +655,9 @@ def attendance_page(user: User) -> None:
         st.info("Add active students before marking attendance.")
         return
 
-    class_choice = st.selectbox("Class and section", classes, format_func=lambda r: f"{r['class_name']} - {r['section']}")
+    class_choice = st.selectbox(
+        "Class and section", classes, format_func=lambda r: f"{r['class_name']} - {r['section']}"
+    )
     selected_date = st.date_input("Attendance date", value=date.today())
 
     students = fetch_all(
@@ -738,8 +746,8 @@ def face_attendance_page(user: User) -> None:
     st.markdown(
         f"""
         <div class="metric-row">
-          <div class="metric-tile"><strong>{registered['total']}</strong><span>Face profiles</span></div>
-          <div class="metric-tile"><strong>{active_students['total']}</strong><span>Active students</span></div>
+          <div class="metric-tile"><strong>{registered["total"]}</strong><span>Face profiles</span></div>
+          <div class="metric-tile"><strong>{active_students["total"]}</strong><span>Active students</span></div>
           <div class="metric-tile"><strong>Present</strong><span>Recognition result</span></div>
           <div class="metric-tile"><strong>Secure</strong><span>Stored as image fingerprint</span></div>
         </div>
@@ -759,17 +767,25 @@ def face_attendance_page(user: User) -> None:
             selected = st.selectbox(
                 "Student",
                 students,
-                format_func=lambda r: f"{r['roll_number']} - {r['first_name']} {r['last_name']} ({r['class_name']}-{r['section']})",
+                format_func=lambda r: (
+                    f"{r['roll_number']} - {r['first_name']} {r['last_name']} ({r['class_name']}-{r['section']})"
+                ),
                 key="face_register_student",
             )
-            source = st.radio("Reference image source", ("Camera", "Upload"), horizontal=True, key="face_register_source")
+            source = st.radio(
+                "Reference image source", ("Camera", "Upload"), horizontal=True, key="face_register_source"
+            )
             image_file = (
                 st.camera_input("Capture student face", key="face_register_camera")
                 if source == "Camera"
-                else st.file_uploader("Upload student face image", type=("jpg", "jpeg", "png"), key="face_register_upload")
+                else st.file_uploader(
+                    "Upload student face image", type=("jpg", "jpeg", "png"), key="face_register_upload"
+                )
             )
 
-            if st.button("Save face profile", disabled=user.role != "Admin" or image_file is None, use_container_width=True):
+            if st.button(
+                "Save face profile", disabled=user.role != "Admin" or image_file is None, use_container_width=True
+            ):
                 try:
                     image_hash = image_to_hash(image_file)
                     image_path = save_face_reference(selected["id"], image_file)
@@ -799,7 +815,9 @@ def face_attendance_page(user: User) -> None:
         scan_file = (
             st.camera_input("Capture face for attendance", key="face_scan_camera")
             if source == "Camera"
-            else st.file_uploader("Upload face image for attendance", type=("jpg", "jpeg", "png"), key="face_scan_upload")
+            else st.file_uploader(
+                "Upload face image for attendance", type=("jpg", "jpeg", "png"), key="face_scan_upload"
+            )
         )
 
         if st.button("Recognize and mark present", disabled=scan_file is None, use_container_width=True):
@@ -903,7 +921,9 @@ def reports_page() -> None:
     cols = st.columns(4)
     start_date = cols[0].date_input("Start date", value=date.today() - timedelta(days=30))
     end_date = cols[1].date_input("End date", value=date.today())
-    classes = ["All"] + [row["class_name"] for row in fetch_all("SELECT DISTINCT class_name FROM students ORDER BY class_name")]
+    classes = ["All"] + [
+        row["class_name"] for row in fetch_all("SELECT DISTINCT class_name FROM students ORDER BY class_name")
+    ]
     class_filter = cols[2].selectbox("Class", classes)
     students = student_options(active_only=False)
     student_labels = {0: "All students"} | {
@@ -915,7 +935,9 @@ def reports_page() -> None:
         st.error("Start date must be before or equal to end date.")
         return
 
-    rows = [row_with_percentage(row) for row in build_report_rows(start_date, end_date, class_filter, student_id or None)]
+    rows = [
+        row_with_percentage(row) for row in build_report_rows(start_date, end_date, class_filter, student_id or None)
+    ]
     total_present = sum(row["present"] or 0 for row in rows)
     total_absent = sum(row["absent"] or 0 for row in rows)
     total_excused = sum(row["excused"] or 0 for row in rows)
@@ -956,7 +978,9 @@ def users_page(user: User) -> None:
         st.error("Only Admin users can manage system users.")
         return
 
-    rows = fetch_all("SELECT id, username, full_name, role, email, phone, last_login FROM users ORDER BY role, username")
+    rows = fetch_all(
+        "SELECT id, username, full_name, role, email, phone, last_login FROM users ORDER BY role, username"
+    )
     st.dataframe([dict(row) for row in rows], use_container_width=True, hide_index=True)
 
     with st.form("create_user"):
