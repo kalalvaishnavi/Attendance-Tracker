@@ -1,4 +1,5 @@
 stages:
+  - validate
   - test
 
 variables:
@@ -9,11 +10,41 @@ cache:
   paths:
     - .cache/pip
 
-test:
-  stage: test
+.python_job:
   image: python:3.10-slim
   before_script:
     - python -m pip install --upgrade pip
     - python -m pip install -r requirements.txt pytest
+
+requirements_check:
+  extends: .python_job
+  stage: validate
+  script:
+    - python -m pip show streamlit Pillow regex pytest
+
+syntax_check:
+  extends: .python_job
+  stage: validate
+  script:
+    - python -m py_compile app.py sql_queries.py
+
+project_files_check:
+  extends: .python_job
+  stage: validate
+  script:
+    - test -f app.py
+    - test -f sql_queries.py
+    - test -f requirements.txt
+    - test -d tests
+
+smoke_import:
+  extends: .python_job
+  stage: test
+  script:
+    - python -c "import app, sql_queries"
+
+unit_tests:
+  extends: .python_job
+  stage: test
   script:
     - python -m pytest -o addopts=""
